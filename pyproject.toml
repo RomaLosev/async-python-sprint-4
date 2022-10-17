@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "async-python-sprint-4"
+version = "0.1.0"
+description = "Practicum.sprint4"
+authors = ["romanlosev <losik19-94@yandex.ru>"]
+readme = "README.md"
+packages = [{include = "async_python_sprint_4"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.85.1"
+python-dotenv = "^0.21.0"
+sqlalchemy = "^1.4.41"
+orjson = "^3.8.0"
+uvicorn = "^0.18.3"
+uvloop = "^0.17.0"
+loguru = "^0.6.0"
+short-url = "^1.2.2"
+asyncpg = "^0.26.0"
+greenlet = "^1.1.3.post0"
+sqlalchemy-utils = "^0.38.3"
+alembic = "^1.8.1"
+pyshorteners = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
