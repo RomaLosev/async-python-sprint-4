@@ -4,6 +4,9 @@ from core.config import app_settings
 from api import base
 from loguru import logger
 
+from users.manager import fastapi_users, auth_backend
+from users.schemas import UserCreate, UserRead
+
 app = FastAPI(
     title=app_settings.app_title,
     docs_url='/api/openapi',
@@ -26,3 +29,13 @@ async def validate_ip(request: Request, call_next):
     return await call_next(request)
 
 app.include_router(base.router, prefix='/api')
+app.include_router(
+    fastapi_users.get_register_router(UserRead, UserCreate),
+    prefix="/auth",
+    tags=["auth"],
+)
+app.include_router(
+    fastapi_users.get_auth_router(auth_backend),
+    prefix="/auth/jwt",
+    tags=["auth"],
+)

@@ -1,12 +1,25 @@
-from fastapi import APIRouter, status, Depends, HTTPException
+from typing import Optional
+from fastapi import APIRouter, status, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse, ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
+
 from db.db import get_session
+from models.models import User
 from schemas import urls
 from services.urls import urls_crud
+from users.manager import current_active_user
 
 router = APIRouter()
+
+
+@router.get('/user/{user_username}', response_model=list[urls.URL])
+async def get_user_urls(
+        db: AsyncSession = Depends(get_session),
+        user_username: str = None
+) -> any:
+    user_urls_list = await urls_crud.get_user_urls(db=db, username=user_username)
+    return user_urls_list
 
 
 @router.get('/urls', response_model=list[urls.URL])
@@ -16,7 +29,6 @@ async def get_all_urls(
         limit: int = 100,
 ) -> any:
     urls_list = await urls_crud.get_multi(db=db, skip=skip, limit=limit)
-    logger.info(urls_list)
     return urls_list
 
 
@@ -53,6 +65,8 @@ async def create_url(
         *,
         db: AsyncSession = Depends(get_session),
         url_in: urls.URLCreate,
+        user: Optional[User] = Depends(current_active_user),
 ) -> any:
-    url = await urls_crud.create(db=db, obj_in=url_in)
+    logger.info(f'User: {user.email}')
+    url = await urls_crud.create(db=db, obj_in=url_in, user=user)
     return url

@@ -48,6 +48,11 @@ class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType]):
         obj = await db.scalar(statement=statement)
         return obj
 
+    async def get_user_urls(self, db: AsyncSession, username: str) -> Optional[ModelType]:
+        statement = select(self._model).where(self._model.owner.username == username)
+        urls = await db.scalars(statement=statement)
+        return urls
+
     async def get(self, db: AsyncSession, url_id: int) -> Optional[ModelType]:
         get_obj = await self.get_item(db, url_id)
         result = get_obj.original_url
@@ -79,13 +84,14 @@ class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType]):
         short_url = shortener.tinyurl.short(url)
         return short_url
 
-    async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
+    async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType, user: ModelType) -> ModelType:
         logger.info(f'obj_in: {obj_in}')
         obj_in_data = jsonable_encoder(obj_in)
         logger.info(f'obj_in_data: {obj_in_data}')
         db_obj = self._model(**obj_in_data)
         db_obj.short_url = self.shortener(db_obj.original_url)
-        logger.info(f'db_obj: {db_obj.short_url}')
+        if user:
+            db_obj.owner = user.username
         db.add(db_obj)
         await db.commit()
         await db.refresh(db_obj)
