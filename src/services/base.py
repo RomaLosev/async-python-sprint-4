@@ -1,7 +1,8 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from typing import Generic, List, Optional, Type, TypeVar
+
 import pyshorteners
-from loguru import logger
 from fastapi.encoders import jsonable_encoder
+from loguru import logger
 from pydantic import BaseModel
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession

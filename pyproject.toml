@@ -21,6 +21,7 @@ sqlalchemy-utils = "^0.38.3"
 alembic = "^1.8.1"
 pyshorteners = "^1.0.1"
 fastapi-users = {extras = ["sqlalchemy"], version = "^10.1.5"}
+isort = "^5.10.1"
 
 
 [build-system]

@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Request, status
 from fastapi.responses import ORJSONResponse
-from core.config import app_settings
-from api import base
 from loguru import logger
 
-from users.manager import fastapi_users, auth_backend
+from api import base
+from core.config import app_settings
+from users.manager import auth_backend, fastapi_users
 from users.schemas import UserCreate, UserRead
 
 app = FastAPI(

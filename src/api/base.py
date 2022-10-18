@@ -1,8 +1,9 @@
 from typing import Optional
-from fastapi import APIRouter, status, Depends, HTTPException, Request
-from fastapi.responses import RedirectResponse, ORJSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
+
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.responses import ORJSONResponse, RedirectResponse
 from loguru import logger
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.db import get_session
 from models.models import User

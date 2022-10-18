@@ -1,10 +1,11 @@
-from fastapi import Depends
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
-from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
-
 from datetime import datetime
-from db.db import Base, AsyncSession, get_session
+
+from fastapi import Depends
+from fastapi_users_db_sqlalchemy import (SQLAlchemyBaseUserTableUUID,
+                                         SQLAlchemyUserDatabase)
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+
+from db.db import AsyncSession, Base, get_session
 
 
 class URL(Base):
