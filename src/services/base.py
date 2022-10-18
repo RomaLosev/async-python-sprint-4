@@ -80,7 +80,7 @@ class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType]):
         return result
 
     @staticmethod
-    def shortener(url):
+    def shortener(url: str) -> str:
         shortener = pyshorteners.Shortener()
         short_url = shortener.tinyurl.short(url)
         return short_url
