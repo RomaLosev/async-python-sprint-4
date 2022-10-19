@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional, Union
 
 from pydantic import BaseModel
 
@@ -15,13 +14,13 @@ class URLCreate(URLBase):
 
 class URLInDBBase(URLBase):
     id: int
-    title: Union[str, None] = None
-    original_url: Union[str, None] = None
+    title: str | None
+    original_url: str | None
     private: bool = False
-    short_url: Union[str, None] = None
+    short_url: str | None
     usage_count: int = 0
-    created_at: datetime = None
-    owner: Optional[str] = None
+    created_at: datetime | None
+    owner: str | None
 
     class Config:
         orm_mode = True

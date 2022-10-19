@@ -1,4 +1,5 @@
-from typing import Generic, List, Optional, Type, TypeVar
+from abc import ABC
+from typing import Generic, Optional, Type, TypeVar
 
 import pyshorteners
 from fastapi.encoders import jsonable_encoder
@@ -13,12 +14,9 @@ ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 
 
-class Repository:
+class Repository(ABC):
 
     def get(self, *args, **kwargs):
-        raise NotImplementedError
-
-    def get_multi(self, *args, **kwargs):
         raise NotImplementedError
 
     def create(self, *args, **kwargs):
@@ -49,35 +47,36 @@ class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType]):
         obj = await db.scalar(statement=statement)
         return obj
 
-    async def get_user_urls(self, db: AsyncSession, username: str) -> Optional[ModelType]:
+    async def get_user_urls(
+             self,
+            db: AsyncSession,
+            username: str
+    ) -> Optional[ModelType]:
         statement = select(self._model).where(self._model.owner.username == username)
         urls = await db.scalars(statement=statement)
         return urls
 
-    async def get(self, db: AsyncSession, url_id: int) -> Optional[ModelType]:
-        get_obj = await self.get_item(db, url_id)
-        result = get_obj.original_url
-        counter = get_obj.usage_count
+    async def get(
+            self,
+            db: AsyncSession,
+            url_id: int
+    ) -> Optional[ModelType]:
+        url = await self.get_item(db, url_id)
+        result = url.original_url
+        counter = url.usage_count
         await self.update_counter(db, url_id, counter)
         if result.startswith(('https://', 'http://')):
             return result
         else:
             return f'https://{result}'
 
-    async def get_multi(
-        self, db: AsyncSession, *, skip=0, limit=100
-    ) -> List[ModelType]:
-        statement = select(self._model).offset(skip).limit(limit)
-        results = await db.execute(statement=statement)
-        logger.info(results)
-        return results.scalars().all()
-
     async def get_status(
-            self, db: AsyncSession, url_id: int
+            self, db: AsyncSession,
+            url_id: int,
     ) -> Optional[ModelType]:
-        get_obj = await self.get_item(db, url_id)
-        result = get_obj.usage_count
-        return result
+        url = await self.get_item(db, url_id)
+        if not url.private:
+            return url.usage_count
 
     @staticmethod
     def shortener(url: str) -> str:
@@ -85,7 +84,11 @@ class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType]):
         short_url = shortener.tinyurl.short(url)
         return short_url
 
-    async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType, user: ModelType) -> ModelType:
+    async def create(
+            self, db: AsyncSession,
+            *, obj_in: CreateSchemaType,
+            user: ModelType
+    ) -> ModelType:
         logger.info(f'obj_in: {obj_in}')
         obj_in_data = jsonable_encoder(obj_in)
         logger.info(f'obj_in_data: {obj_in_data}')

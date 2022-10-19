@@ -1,8 +1,10 @@
 from datetime import datetime
 
 from fastapi import Depends
-from fastapi_users_db_sqlalchemy import (SQLAlchemyBaseUserTableUUID,
-                                         SQLAlchemyUserDatabase)
+from fastapi_users_db_sqlalchemy import (
+    SQLAlchemyBaseUserTableUUID,
+    SQLAlchemyUserDatabase
+)
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 
 from db.db import AsyncSession, Base, get_session

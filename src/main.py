@@ -3,7 +3,7 @@ from fastapi.responses import ORJSONResponse
 from loguru import logger
 
 from api import base
-from core.config import app_settings
+from core.config import BLOCKED_IPS, app_settings
 from users.manager import auth_backend, fastapi_users
 from users.schemas import UserCreate, UserRead
 
@@ -14,8 +14,6 @@ app = FastAPI(
     default_response_class=ORJSONResponse
 )
 
-BLOCKED_IPS = []
-
 
 @app.middleware('http')
 async def validate_ip(request: Request, call_next):
@@ -25,7 +23,7 @@ async def validate_ip(request: Request, call_next):
         data = {
             'message': f'IP {ip} is not allowed to access this resource.'
         }
-        return ORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content=data)
+        return ORJSONResponse(status_code=status.HTTP_403_FORBIDDEN, content=data)
     return await call_next(request)
 
 app.include_router(base.router, prefix='/api')

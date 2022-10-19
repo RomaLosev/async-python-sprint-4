@@ -17,20 +17,10 @@ router = APIRouter()
 @router.get('/user/{user_username}', response_model=list[urls.URL])
 async def get_user_urls(
         db: AsyncSession = Depends(get_session),
-        user_username: str = None
+        user_username: str = Depends(current_active_user)
 ) -> any:
     user_urls_list = await urls_crud.get_user_urls(db=db, username=user_username)
     return user_urls_list
-
-
-@router.get('/urls', response_model=list[urls.URL])
-async def get_all_urls(
-        db: AsyncSession = Depends(get_session),
-        skip: int = 0,
-        limit: int = 100,
-) -> any:
-    urls_list = await urls_crud.get_multi(db=db, skip=skip, limit=limit)
-    return urls_list
 
 
 @router.get('/urls/{url_id}')

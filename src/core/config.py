@@ -3,6 +3,8 @@ import os
 from pydantic import BaseSettings, PostgresDsn
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SECRET = os.getenv('SECRET')
+BLOCKED_IPS = []
 
 
 class AppSettings(BaseSettings):
