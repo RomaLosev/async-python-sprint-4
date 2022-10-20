@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Generic, Optional, Type, TypeVar
 
 import pyshorteners
@@ -16,9 +16,11 @@ CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 
 class Repository(ABC):
 
+    @abstractmethod
     def get(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def create(self, *args, **kwargs):
         raise NotImplementedError
 

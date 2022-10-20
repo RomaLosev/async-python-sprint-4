@@ -44,7 +44,7 @@ async def get_status(
         url_id: int,
 ) -> any:
     url_status = await urls_crud.get_status(db=db, url_id=url_id)
-    if not status:
+    if not url_status:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Item not found"
         )
